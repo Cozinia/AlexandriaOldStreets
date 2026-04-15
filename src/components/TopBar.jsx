@@ -8,7 +8,7 @@ export default function TopBar() {
     <div className="topbar">
       <div className="logo">🗺</div>
       <div>
-        <h1>Nomenclatorul Strazilor — Alexandria, Teleorman</h1>
+        <h1>Nomenclatorul Strazilor Alexandria, Teleorman</h1>
         {/* <p>HCL nr. 323 · 28 noiembrie 2013 · Click pe o strada pentru detalii</p> */}
       </div>
       <div className="spacer" />

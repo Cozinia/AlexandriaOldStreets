@@ -56,8 +56,8 @@ function MapController({ selectedStreet, onStreetClick, onMapClick, onStatus, on
         const hasOld = sd && sd.oldNames.length > 0
 
         const style = sd
-          ? { color: '#94a3b8', weight: 3, opacity: 0.8 }
-          : { color: '#cbd5e1', weight: 2, opacity: 0.5 }
+          ? { color: '#94a3b8', weight: 5, opacity: 0.8 }
+          : { color: '#cbd5e1', weight: 3, opacity: 0.5 }
 
         const line = L.polyline(coords, { ...style, interactive: !!sd })
 
@@ -99,7 +99,7 @@ function MapController({ selectedStreet, onStreetClick, onMapClick, onStatus, on
     // Already loaded — highlight immediately
     if (layerCache.current[selectedStreet.current]?.length > 0) {
       layerCache.current[selectedStreet.current].forEach(l =>
-        l.setStyle({ color: '#7c3aed', weight: 7, opacity: 1 })
+        l.setStyle({ color: '#7c3aed', weight: 9, opacity: 1 })
       )
       onLocStatus('found')
       return
@@ -123,13 +123,13 @@ function MapController({ selectedStreet, onStreetClick, onMapClick, onStatus, on
           : `<span class="stt-name">${selectedStreet.current}</span>`
         result.segments.forEach(coords => {
           if (coords.length < 2) return
-          const line = L.polyline(coords, { color: '#7c3aed', weight: 7, opacity: 1 })
+          const line = L.polyline(coords, { color: '#7c3aed', weight: 9, opacity: 1 })
           line.on('click', e => { L.DomEvent.stopPropagation(e); onStreetClick(selectedStreet) })
           line.bindTooltip(tipHtml, { sticky: true, direction: 'top', className: 'street-tooltip' })
           line.addTo(map)
           layers.push(line)
         })
-        styleCache.current[selectedStreet.current] = { color: '#94a3b8', weight: 3, opacity: 0.8 }
+        styleCache.current[selectedStreet.current] = { color: '#94a3b8', weight: 5, opacity: 0.8 }
         layerCache.current[selectedStreet.current] = layers
         onLocStatus('found')
       } else {
