@@ -6,7 +6,15 @@ import { norm } from '../utils/normalize.js'
 import { fetchOverpass } from '../utils/overpass.js'
 import { fetchStreetGeometry } from '../utils/nominatim.js'
 
-// ── Street lookup built once at module level ──────────────────────
+function esc(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 const lookup = {}
 STREETS.forEach(s => {
   lookup[norm(s.current)] = s
@@ -23,14 +31,14 @@ function matchStreet(osmName) {
   return null
 }
 
-// ── Map controller (must be inside MapContainer) ──────────────────
 function MapController({ selectedStreet, onStreetClick, onMapClick, onStatus, onLocStatus }) {
-  const map          = useMap()
-  const layerCache   = useRef({})   // name → [L.polyline]
-  const styleCache   = useRef({})   // name → style object
-  const prevSelected = useRef(null)
+  const map            = useMap()
+  const layerCache     = useRef({})
+  const styleCache     = useRef({})
+  const prevSelected   = useRef(null)
+  const pendingLookup  = useRef(null)
+  const lastNominatim  = useRef(0)
 
-  // Initial Overpass load
   useEffect(() => {
     async function load() {
       onStatus(true, 'Se incarca harta…')
@@ -52,9 +60,7 @@ function MapController({ selectedStreet, onStreetClick, onMapClick, onStatus, on
         const coords = (el.nodes || []).map(id => nodes[id]).filter(Boolean)
         if (coords.length < 2) return
 
-        const sd     = matchStreet(el.tags.name)
-        const hasOld = sd && sd.oldNames.length > 0
-
+        const sd    = matchStreet(el.tags.name)
         const style = sd
           ? { color: '#94a3b8', weight: 5, opacity: 0.8 }
           : { color: '#cbd5e1', weight: 3, opacity: 0.5 }
@@ -68,8 +74,8 @@ function MapController({ selectedStreet, onStreetClick, onMapClick, onStatus, on
           line.on('click', e => { L.DomEvent.stopPropagation(e); onStreetClick(sd) })
 
           const tipHtml = sd.oldNames.length > 0
-            ? `<span class="stt-name">${sd.current}</span><span class="stt-old">← ${sd.oldNames[0]}</span>`
-            : `<span class="stt-name">${sd.current}</span>`
+            ? `<span class="stt-name">${esc(sd.current)}</span>${sd.oldNames.map(n => `<span class="stt-old">← ${esc(n)}</span>`).join('')}`
+            : `<span class="stt-name">${esc(sd.current)}</span>`
           line.bindTooltip(tipHtml, { sticky: true, direction: 'top', className: 'street-tooltip' })
         }
         line.addTo(map)
@@ -84,9 +90,7 @@ function MapController({ selectedStreet, onStreetClick, onMapClick, onStatus, on
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Handle selection changes
   useEffect(() => {
-    // Restore previous street style
     const prev = prevSelected.current
     if (prev && layerCache.current[prev]) {
       const ds = styleCache.current[prev]
@@ -96,45 +100,54 @@ function MapController({ selectedStreet, onStreetClick, onMapClick, onStatus, on
     if (!selectedStreet) { prevSelected.current = null; return }
     prevSelected.current = selectedStreet.current
 
-    // Already loaded — highlight immediately
     if (layerCache.current[selectedStreet.current]?.length > 0) {
       layerCache.current[selectedStreet.current].forEach(l =>
-        l.setStyle({ color: '#7c3aed', weight: 9, opacity: 1 })
+        l.setStyle({ color: '#2563eb', weight: 9, opacity: 1 })
       )
       onLocStatus('found')
       return
     }
 
-    // Fetch via Nominatim
     async function locate() {
-      onLocStatus('locating')
-      const result = await fetchStreetGeometry(selectedStreet)
+      if (pendingLookup.current === selectedStreet.current) return
+      pendingLookup.current = selectedStreet.current
 
-      // Guard: user may have deselected while we were fetching
-      if (prevSelected.current !== selectedStreet.current) return
+      try {
+        const wait = 1100 - (Date.now() - lastNominatim.current)
+        if (wait > 0) await new Promise(r => setTimeout(r, wait))
 
-      if (!result || result.type === 'notfound') { onLocStatus('notfound'); return }
+        if (prevSelected.current !== selectedStreet.current) return
 
-      if (result.type === 'line') {
-        const hasOld = selectedStreet.oldNames.length > 0
-        const layers = []
-        const tipHtml = selectedStreet.oldNames.length > 0
-          ? `<span class="stt-name">${selectedStreet.current}</span><span class="stt-old">← ${selectedStreet.oldNames[0]}</span>`
-          : `<span class="stt-name">${selectedStreet.current}</span>`
-        result.segments.forEach(coords => {
-          if (coords.length < 2) return
-          const line = L.polyline(coords, { color: '#7c3aed', weight: 9, opacity: 1 })
-          line.on('click', e => { L.DomEvent.stopPropagation(e); onStreetClick(selectedStreet) })
-          line.bindTooltip(tipHtml, { sticky: true, direction: 'top', className: 'street-tooltip' })
-          line.addTo(map)
-          layers.push(line)
-        })
-        styleCache.current[selectedStreet.current] = { color: '#94a3b8', weight: 5, opacity: 0.8 }
-        layerCache.current[selectedStreet.current] = layers
-        onLocStatus('found')
-      } else {
-        L.circleMarker(result.latlng, { radius: 10, color: '#7c3aed', weight: 3, fillColor: '#ede9fe', fillOpacity: 0.9 }).addTo(map)
-        onLocStatus('approx')
+        lastNominatim.current = Date.now()
+        onLocStatus('locating')
+        const result = await fetchStreetGeometry(selectedStreet)
+
+        if (prevSelected.current !== selectedStreet.current) return
+
+        if (!result || result.type === 'notfound') { onLocStatus('notfound'); return }
+
+        if (result.type === 'line') {
+          const layers = []
+          const tipHtml = selectedStreet.oldNames.length > 0
+            ? `<span class="stt-name">${esc(selectedStreet.current)}</span>${selectedStreet.oldNames.map(n => `<span class="stt-old">← ${esc(n)}</span>`).join('')}`
+            : `<span class="stt-name">${esc(selectedStreet.current)}</span>`
+          result.segments.forEach(coords => {
+            if (coords.length < 2) return
+            const line = L.polyline(coords, { color: '#2563eb', weight: 9, opacity: 1 })
+            line.on('click', e => { L.DomEvent.stopPropagation(e); onStreetClick(selectedStreet) })
+            line.bindTooltip(tipHtml, { sticky: true, direction: 'top', className: 'street-tooltip' })
+            line.addTo(map)
+            layers.push(line)
+          })
+          styleCache.current[selectedStreet.current] = { color: '#94a3b8', weight: 5, opacity: 0.8 }
+          layerCache.current[selectedStreet.current] = layers
+          onLocStatus('found')
+        } else {
+          L.circleMarker(result.latlng, { radius: 10, color: '#2563eb', weight: 3, fillColor: '#ede9fe', fillOpacity: 0.9 }).addTo(map)
+          onLocStatus('approx')
+        }
+      } finally {
+        pendingLookup.current = null
       }
     }
 
@@ -144,7 +157,6 @@ function MapController({ selectedStreet, onStreetClick, onMapClick, onStatus, on
   return null
 }
 
-// ── Public component ──────────────────────────────────────────────
 export default function MapView({ selectedStreet, onStreetClick, onMapClick, onStatus, onLocStatus }) {
   return (
     <MapContainer

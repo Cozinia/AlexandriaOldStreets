@@ -11,7 +11,7 @@ export default function App() {
   const [loadingStreet,  setLoadingStreet]  = useState(null)
   const [locStatus,      setLocStatus]      = useState(null)
   const [status,         setStatusState]    = useState({ loading: false, text: '' })
-
+  const [sidebarOpen,    setSidebarOpen]    = useState(false)
   const setStatus = useCallback((loading, text) => {
     setStatusState({ loading, text })
   }, [])
@@ -20,6 +20,7 @@ export default function App() {
     setSelectedStreet(sd)
     setLoadingStreet(sd)
     setLocStatus('locating')
+    setSidebarOpen(false)
   }, [])
 
   const closeDetail = useCallback(() => {
@@ -35,8 +36,14 @@ export default function App() {
 
   return (
     <div className="app">
-      <TopBar />
+      <TopBar sidebarOpen={sidebarOpen} onToggleSidebar={() => setSidebarOpen(o => !o)} />
       <div className="main">
+        <Sidebar
+          selectedStreet={selectedStreet}
+          loadingStreet={loadingStreet}
+          onSelect={selectStreet}
+          open={sidebarOpen}
+        />
         <div className="map-wrap">
           <MapView
             selectedStreet={selectedStreet}

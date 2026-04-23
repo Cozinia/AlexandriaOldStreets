@@ -11,7 +11,7 @@ function inCity(r) {
 
 export async function fetchStreetGeometry(sd) {
   const cacheKey = 'nom_' + norm(sd.current)
-  const cached   = cacheGet(cacheKey)
+  const cached   = cacheGet(cacheKey, d => d && ['line', 'point', 'notfound'].includes(d.type))
   if (cached) return cached
 
   const queries = [

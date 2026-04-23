@@ -11,7 +11,7 @@ const BBOX  = '43.940,25.280,44.010,25.395'
 const QUERY = `[out:json][timeout:28];(way["highway"]["name"](${BBOX}););out body;>;out skel qt;`
 
 export async function fetchOverpass(onStatus) {
-  const cached = cacheGet('overpass')
+  const cached = cacheGet('overpass', d => d && Array.isArray(d.elements))
   if (cached) {
     onStatus?.('Se restaureaza din cache…')
     return cached

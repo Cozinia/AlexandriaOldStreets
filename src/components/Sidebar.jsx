@@ -9,7 +9,7 @@ const MODES = [
   { id: 'same',    label: 'Neschimbate' },
 ]
 
-export default function Sidebar({ selectedStreet, loadingStreet, onSelect }) {
+export default function Sidebar({ selectedStreet, loadingStreet, onSelect, open }) {
   const [mode,  setMode]  = useState('all')
   const [query, setQuery] = useState('')
   const activeRef = useRef(null)
@@ -29,7 +29,7 @@ export default function Sidebar({ selectedStreet, loadingStreet, onSelect }) {
   }, [selectedStreet])
 
   return (
-    <div className="sidebar">
+    <div className={`sidebar${open ? ' open' : ''}`}>
       <div className="sb-head">
         <div className="sw">
           <SearchIcon />

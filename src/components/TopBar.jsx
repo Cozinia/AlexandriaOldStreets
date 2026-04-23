@@ -1,15 +1,17 @@
 import { STREETS } from '../data/streets.js'
 
-export default function TopBar() {
+export default function TopBar({ sidebarOpen, onToggleSidebar }) {
   const renamed = STREETS.filter(s => s.oldNames.length > 0).length
   const same    = STREETS.length - renamed
 
   return (
     <div className="topbar">
+      <button className={`burger${sidebarOpen ? ' open' : ''}`} onClick={onToggleSidebar} title="Strazi">
+        <span /><span /><span />
+      </button>
       <div className="logo">🗺</div>
       <div>
         <h1>Nomenclatorul Strazilor Alexandria, Teleorman</h1>
-        {/* <p>HCL nr. 323 · 28 noiembrie 2013 · Click pe o strada pentru detalii</p> */}
       </div>
       <div className="spacer" />
       <span className="pill pill-r">{renamed} redenumite</span>
