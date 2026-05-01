@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react'
 import { MapContainer, TileLayer, ZoomControl, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import { STREETS } from '../data/streets.js'
+import { PHOTO_MARKERS } from '../data/photoMarkers.js'
+import { createPhotoMarker } from '../utils/photoMarker.js'
 import { norm } from '../utils/normalize.js'
 import { fetchOverpass } from '../utils/overpass.js'
 import { fetchStreetGeometry } from '../utils/nominatim.js'
@@ -31,7 +33,7 @@ function matchStreet(osmName) {
   return null
 }
 
-function MapController({ selectedStreet, onStreetClick, onMapClick, onStatus, onLocStatus }) {
+function MapController({ selectedStreet, onStreetClick, onMapClick, onStatus, onLocStatus, onPhotoClick }) {
   const map            = useMap()
   const layerCache     = useRef({})
   const styleCache     = useRef({})
@@ -82,6 +84,17 @@ function MapController({ selectedStreet, onStreetClick, onMapClick, onStatus, on
       })
 
       onStatus(false, '')
+
+      // Photo pin markers
+      PHOTO_MARKERS.forEach(pm => {
+        const marker = L.marker(pm.latlng, { icon: createPhotoMarker(pm.photo) })
+        const tip = pm.location
+          ? `<span class="stt-name">${pm.label}</span><span class="stt-old">${pm.location}</span>`
+          : `<span class="stt-name">${pm.label}</span>`
+        marker.bindTooltip(tip, { direction: 'top', className: 'street-tooltip' })
+        marker.on('click', e => { L.DomEvent.stopPropagation(e); onPhotoClick(pm) })
+        marker.addTo(map)
+      })
     }
 
     load()
@@ -157,7 +170,7 @@ function MapController({ selectedStreet, onStreetClick, onMapClick, onStatus, on
   return null
 }
 
-export default function MapView({ selectedStreet, onStreetClick, onMapClick, onStatus, onLocStatus }) {
+export default function MapView({ selectedStreet, onStreetClick, onMapClick, onStatus, onLocStatus, onPhotoClick }) {
   return (
     <MapContainer
       center={[43.9769, 25.3332]}
@@ -178,6 +191,7 @@ export default function MapView({ selectedStreet, onStreetClick, onMapClick, onS
         onMapClick={onMapClick}
         onStatus={onStatus}
         onLocStatus={onLocStatus}
+        onPhotoClick={onPhotoClick}
       />
     </MapContainer>
   )

@@ -1,10 +1,11 @@
 import { useState, useCallback } from 'react'
-import TopBar    from './components/TopBar.jsx'
-import Sidebar   from './components/Sidebar.jsx'
-import MapView   from './components/MapView.jsx'
+import TopBar     from './components/TopBar.jsx'
+import Sidebar    from './components/Sidebar.jsx'
+import MapView    from './components/MapView.jsx'
 import DetailCard from './components/DetailCard.jsx'
 import StatusBar  from './components/StatusBar.jsx'
 import Legend     from './components/Legend.jsx'
+import PhotoModal from './components/PhotoModal.jsx'
 
 export default function App() {
   const [selectedStreet, setSelectedStreet] = useState(null)
@@ -12,6 +13,7 @@ export default function App() {
   const [locStatus,      setLocStatus]      = useState(null)
   const [status,         setStatusState]    = useState({ loading: false, text: '' })
   const [sidebarOpen,    setSidebarOpen]    = useState(false)
+  const [selectedPhoto,  setSelectedPhoto]  = useState(null)
   const setStatus = useCallback((loading, text) => {
     setStatusState({ loading, text })
   }, [])
@@ -51,6 +53,7 @@ export default function App() {
             onMapClick={closeDetail}
             onStatus={setStatus}
             onLocStatus={handleLocStatus}
+            onPhotoClick={setSelectedPhoto}
           />
           <Legend />
           <StatusBar text={status.text} loading={status.loading} />
@@ -61,6 +64,7 @@ export default function App() {
           />
         </div>
       </div>
+      <PhotoModal photo={selectedPhoto} onClose={() => setSelectedPhoto(null)} />
     </div>
   )
 }

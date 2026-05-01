@@ -1,6 +1,6 @@
 # Old Alexandria
 
-An interactive map of every street in Alexandria, Teleorman, based on **HCL nr. 323 / 28 november 2013** — the local council decision that officially renamed (or confirmed) each street following the fall of communism in 1989. For every street you can see its current name, its old communist-era name(s), and its exact location highlighted on the map.
+An interactive map of every street in Alexandria, Teleorman, based on **HCL nr. 323 / 28 november 2013** — the local council decision that officially renamed each street following the fall of communism in 1989. For every street you can see its current name, its old communist-era name(s), and its exact location highlighted on the map.
 
 <img src="./SnapshotAlexandria.png" width="900" height="400" alt="App screenshot">
 
@@ -13,6 +13,21 @@ An interactive map of every street in Alexandria, Teleorman, based on **HCL nr. 
 - **Switch between views** — see all streets, only the renamed ones, or only the ones that kept their name.
 - **Click any street** — either in the list or directly on the map — to highlight it and see its full history.
 - **Discover old names** — streets that were renamed show all their previous communist-era names in a detail panel.
+- **Explore historical photo markers** — rectangular photo pins placed at specific locations around the city show archival photographs. Click any pin to open a full-size modal with the photo, the location address, and the old and new name of the place.
+
+---
+
+## Historical photo markers
+
+Archival photographs are pinned directly on the map as rectangular photo frames with a location pointer. Clicking a marker opens a modal showing the full image alongside the location, its old name, and what it became.
+
+<img src="./photoMarkerScoala5.png" width="600" alt="Alexandria — Școala Primară Nr. 1">
+
+*Alexandria — Școala Primară Nr. 1, Str. Libertății nr. 148. Now: Școala gimnazială Mihai Eminescu.*
+
+Archival photographs courtesy of the Facebook page **[Alexandria Teleorman](https://www.facebook.com/Alexandria.Teleorman.Romania)**.
+
+Photos and location data live in `src/data/photoMarkers.js`. To add a new marker, place the image in `src/locations/`, import it in that file, and add an entry with `latlng`, `label`, `location`, `oldName`, and `newName`.
 
 ---
 
