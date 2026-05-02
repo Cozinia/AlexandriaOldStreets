@@ -40,6 +40,7 @@ export default function App() {
     <div className="app">
       <TopBar sidebarOpen={sidebarOpen} onToggleSidebar={() => setSidebarOpen(o => !o)} />
       <div className="main">
+        <div className={`sb-backdrop${sidebarOpen ? ' show' : ''}`} onClick={() => setSidebarOpen(false)} />
         <Sidebar
           selectedStreet={selectedStreet}
           loadingStreet={loadingStreet}
