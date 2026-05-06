@@ -33,13 +33,14 @@ function matchStreet(osmName) {
   return null
 }
 
-function MapController({ selectedStreet, onStreetClick, onMapClick, onStatus, onLocStatus, onPhotoClick }) {
+function MapController({ selectedStreet, onStreetClick, onMapClick, onStatus, onLocStatus, onPhotoClick, showPhotos }) {
   const map            = useMap()
   const layerCache     = useRef({})
   const styleCache     = useRef({})
   const prevSelected   = useRef(null)
   const pendingLookup  = useRef(null)
   const lastNominatim  = useRef(0)
+  const photoLayers    = useRef([])
 
   useEffect(() => {
     async function load() {
@@ -94,6 +95,7 @@ function MapController({ selectedStreet, onStreetClick, onMapClick, onStatus, on
         marker.bindTooltip(tip, { direction: 'top', className: 'street-tooltip' })
         marker.on('click', e => { L.DomEvent.stopPropagation(e); onPhotoClick(pm) })
         marker.addTo(map)
+        photoLayers.current.push(marker)
       })
     }
 
@@ -102,6 +104,10 @@ function MapController({ selectedStreet, onStreetClick, onMapClick, onStatus, on
     return () => map.off('click', onMapClick)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    photoLayers.current.forEach(m => showPhotos ? m.addTo(map) : m.remove())
+  }, [showPhotos]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const prev = prevSelected.current
@@ -170,7 +176,7 @@ function MapController({ selectedStreet, onStreetClick, onMapClick, onStatus, on
   return null
 }
 
-export default function MapView({ selectedStreet, onStreetClick, onMapClick, onStatus, onLocStatus, onPhotoClick }) {
+export default function MapView({ selectedStreet, onStreetClick, onMapClick, onStatus, onLocStatus, onPhotoClick, showPhotos }) {
   return (
     <MapContainer
       center={[43.9769, 25.3332]}
@@ -192,6 +198,7 @@ export default function MapView({ selectedStreet, onStreetClick, onMapClick, onS
         onStatus={onStatus}
         onLocStatus={onLocStatus}
         onPhotoClick={onPhotoClick}
+        showPhotos={showPhotos}
       />
     </MapContainer>
   )

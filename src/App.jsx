@@ -14,6 +14,7 @@ export default function App() {
   const [status,         setStatusState]    = useState({ loading: false, text: '' })
   const [sidebarOpen,    setSidebarOpen]    = useState(false)
   const [selectedPhoto,  setSelectedPhoto]  = useState(null)
+  const [showPhotos,     setShowPhotos]     = useState(true)
   const setStatus = useCallback((loading, text) => {
     setStatusState({ loading, text })
   }, [])
@@ -55,7 +56,16 @@ export default function App() {
             onStatus={setStatus}
             onLocStatus={handleLocStatus}
             onPhotoClick={setSelectedPhoto}
+            showPhotos={showPhotos}
           />
+          <button
+            className={`photo-toggle${showPhotos ? ' on' : ''}`}
+            onClick={() => setShowPhotos(v => !v)}
+            title={showPhotos ? 'Ascunde fotografiile' : 'Afișează fotografiile'}
+          >
+            <span className="photo-toggle-icon">🖼</span>
+            <span className="photo-toggle-label">{showPhotos ? 'Foto: ON' : 'Foto: OFF'}</span>
+          </button>
           <Legend />
           <StatusBar text={status.text} loading={status.loading} />
           <DetailCard
