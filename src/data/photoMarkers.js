@@ -37,6 +37,15 @@ import primaria from '../locations/Primaria.jpg'
 import primarieOld from '../locations/primarie-old.jpg'
 import primariaInterbelic from '../locations/primaria-interbelic.jpg'
 import politiaJudeteana from '../locations/politiaJudeteana.jpg'
+import demonstratieRaliu from '../locations/DemonstratieRaliu.jpg'
+import repetitie1Mai from '../locations/Repetitie1Mai.jpg'
+import benzinariaPeco from '../locations/BenzinariaPeco.jpg'
+import moaraBratescu from '../locations/MoaraBratescu.jpg'
+import scoalaNormala from '../locations/ScoalaNormala.jpg'
+import casaDeCulturaNoua from '../locations/CasaDeCulturaNoua.jpg'
+import vedereCentru from '../locations/vedereCentru.jpg'
+import spitalulJudetean from '../locations/SpitalulJudetean.jpg'
+import autoservire from '../locations/Autoservire.jpg'
 import inmormantare from '../locations/inmormantare.jpg'
 import inmormantare2 from '../locations/inmormantare2.jpg'
 import dunariiCelebrare from '../locations/dunarii-celebrare.jpg'
@@ -44,6 +53,87 @@ import monumentulRascoalei1907 from '../locations/monumentulRascoalei1907.jpg'
 import monumentulRascoalei19071 from '../locations/monumentulRascoalei1907-1.jpg'
 
 export const PHOTO_MARKERS = [
+  {
+    id: 40,
+    latlng: [43.971030, 25.330559],
+    photo: autoservire,
+    label: 'Autoservire / Alimentară',
+    location: null,
+    oldName: 'Autoservire / Alimentară (anii \'70)',
+    newName: '',
+  },
+  {
+    id: 39,
+    latlng: [43.979537, 25.313996],
+    photo: spitalulJudetean,
+    label: 'Spitalul Județean',
+    location: null,
+    oldName: 'Spitalul Județean (anii \'80)',
+    newName: '',
+  },
+  {
+    id: 38,
+    latlng: [43.970665, 25.329425],
+    photo: vedereCentru,
+    label: 'Vedere Centru',
+    location: null,
+    oldName: 'Vedere Centru',
+    newName: '',
+  },
+  {
+    id: 37,
+    latlng: [43.969638, 25.328469],
+    photo: casaDeCulturaNoua,
+    label: 'Casa de Cultură',
+    location: null,
+    oldName: 'Casa de Cultură',
+    newName: '',
+  },
+  {
+    id: 36,
+    latlng: [43.975615, 25.322631],
+    photo: scoalaNormala,
+    label: 'Școala Normală (1934)',
+    location: null,
+    oldName: 'Școala Normală (1934)',
+    newName: 'Liceul Tehnologic Nicolae Bălcescu',
+  },
+  {
+    id: 35,
+    latlng: [43.967606, 25.322692],
+    photo: moaraBratescu,
+    label: 'Moara Brătescu',
+    location: null,
+    oldName: 'Moara Brătescu',
+    newName: 'Fabrica Germino',
+  },
+  {
+    id: 34,
+    latlng: [43.978368, 25.314507],
+    photo: benzinariaPeco,
+    label: 'Benzinăria Peco',
+    location: null,
+    oldName: 'Benzinăria Peco',
+    newName: '',
+  },
+  {
+    id: 33,
+    latlng: [43.968987, 25.329454],
+    photo: repetitie1Mai,
+    label: 'Repetiție pentru Defilarea de 1 Mai 1975',
+    location: null,
+    oldName: 'Repetiție pentru Defilarea de 1 Mai 1975',
+    newName: '',
+  },
+  {
+    id: 32,
+    latlng: [43.970963, 25.328981],
+    photo: demonstratieRaliu,
+    label: 'Demonstrație Raliu 1975',
+    location: null,
+    oldName: 'Demonstrație Raliu 1975',
+    newName: '',
+  },
   {
     id: 31,
     latlng: [43.971793, 25.328221],

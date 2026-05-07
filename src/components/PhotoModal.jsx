@@ -45,14 +45,18 @@ export default function PhotoModal({ photo, onClose }) {
           <p className="pm-location">{photo.location}</p>
           <h2 className="pm-title">{current.sublabel ?? photo.label}</h2>
           <div className="pm-names">
-            <div className="pm-name-row">
-              <span className="pm-name-tag old">Denumire veche</span>
-              <span className="pm-name-val">{photo.oldName}</span>
-            </div>
-            <div className="pm-name-row">
-              <span className="pm-name-tag new">Denumire nouă</span>
-              <span className="pm-name-val">{photo.newName}</span>
-            </div>
+            {photo.oldName && (
+              <div className="pm-name-row">
+                <span className="pm-name-tag old">Nume</span>
+                <span className="pm-name-val">{photo.oldName}</span>
+              </div>
+            )}
+            {photo.newName && (
+              <div className="pm-name-row">
+                <span className="pm-name-tag new">Detalii</span>
+                <span className="pm-name-val">{photo.newName}</span>
+              </div>
+            )}
           </div>
           <p className="pm-credit">
             Foto: <a href="https://www.facebook.com/Alexandria.Teleorman.Romania" target="_blank" rel="noopener noreferrer">Alexandria Teleorman</a>
